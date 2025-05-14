@@ -14,6 +14,7 @@ from fastapi import FastAPI, Request, status, Header
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from paramiko import PKey
 from pydantic import BaseModel
 import uvicorn
 
@@ -96,7 +97,7 @@ async def get_all_posts(user: Union[str, None] = None):
         logger.info(f"Récupération des postes de : {user}")
         res = table.query(
             IndexName="user-index",  
-            KeyConditionExpression=Key("user").eq(user)
+            KeyConditionExpression=PKey("user").eq(user)
         )
         items = res.get("Items", [])
     else :
@@ -105,8 +106,7 @@ async def get_all_posts(user: Union[str, None] = None):
         items = res.get("Items", [])
         
      # Doit retourner une liste de posts
-    return res[""]
-
+    return items
     
 @app.delete("/posts/{post_id}")
 async def delete_post(post_id: str, authorization: str | None = Header(default=None)):
